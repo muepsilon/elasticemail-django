@@ -24,11 +24,11 @@ class ApiClient(object):
         else:
             print(result.status_code)
             print(result.text)
-            raise
+            raise Exception(result.text)
         if json_result['success'] is False:
             print("Failed to send email.{0}".format(json_result['error']))
             print(json_result['error'])
-            raise
+            raise Exception("Failed to send email.{0}".format(json_result['error']))
         print("Email sent.{0}".format(json_result['data']))
         return json_result['data']
 

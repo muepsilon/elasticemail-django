@@ -40,7 +40,7 @@ class ElasticEmailBackend(BaseEmailBackend):
                 count += 1
             except HTTPError as e:
                 if not self.fail_silently:
-                    raise
+                    raise Exception(e)
         return count
 
     def _build_ee_mail(self,email):
