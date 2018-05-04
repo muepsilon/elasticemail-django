@@ -17,13 +17,19 @@ class ApiClient(object):
             for key in data:
                 attach = attach + key + '=' + data[key] + '&' 
             url = url + '?' + attach[:-1]
-            result = requests.get(self.apiUri + url)   
-            
-        json_result = result.json()
+            result = requests.get(self.apiUri + url)
         
+        if result.status_code == 200:
+            json_result = result.json()
+        else:
+            print(result.status_code)
+            print(result.text)
+            raise
         if json_result['success'] is False:
-            return json_result['error']
-            
+            print("Failed to send email.{0}".format(json_result['error']))
+            print(json_result['error'])
+            raise
+        print("Email sent.{0}".format(json_result['data']))
         return json_result['data']
 
     def send_email(self,email,isTransactional=True):

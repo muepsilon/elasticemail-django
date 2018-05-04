@@ -1,5 +1,5 @@
 from email.mime.base import MIMEBase
-from python_http_client.exceptions import HTTPError
+from urllib3.exceptions import HTTPError
 
 try:
     import rfc822
@@ -56,17 +56,24 @@ class ElasticEmailBackend(BaseEmailBackend):
             mail['cc'] = email.cc
         if email.bcc:
             mail['bcc'] = email.bcc
-
         if isinstance(email,EmailMultiAlternatives):
-            for alt in email.alternatives:
-                if alt[1] == "text/html":
-                    if 'bodyHtml' in bodyHtml:
-                        mail['bodyHtml']+=alt[0]
+            if len(email.alternatives) > 0:
+                for alt in email.alternatives:
+                    if alt[1] == "text/html":
+                        if 'bodyHtml' in bodyHtml:
+                            mail['bodyHtml']+=alt[0]
+                        else:
+                            mail['bodyHtml'] = alt[0]
                     else:
-                        mail['bodyHtml'] = alt[0]
+                        if 'bodyText' in bodyHtml:
+                            mail['bodyText']+=alt[0]
+                        else:
+                            mail['bodyText'] = alt[0]
+            else:
+                mail['bodyText'] = email.body
         elif email.content_subtype == "html":
             mail['bodyHtml'] = email.body
         else:
             mail['bodyText'] = email.body
-
+        print mail
         return mail
