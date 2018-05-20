@@ -11,7 +11,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMultiAlternatives
 from django.core.mail.backends.base import BaseEmailBackend
 
-from elastic_api import ApiClient
+from elasticemailbackend.elastic_api import ApiClient
 
 class ElasticEmailBackend(BaseEmailBackend):
     """docstring for ElasticEmailBackend"""
@@ -75,5 +75,5 @@ class ElasticEmailBackend(BaseEmailBackend):
             mail['bodyHtml'] = email.body
         else:
             mail['bodyText'] = email.body
-        print mail
+        print(mail)
         return mail
