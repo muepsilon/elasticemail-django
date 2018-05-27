@@ -9,9 +9,9 @@ class ApiClient(object):
     def request(self,method, url, data):
         data['apikey'] = self.apiKey
         if method == 'POST':
-            result = requests.post(self.apiUri + url, params = data)
+            result = requests.post(self.apiUri + url, data = data)
         elif method == 'PUT':
-            result = requests.put(self.apiUri + url, params = data)
+            result = requests.put(self.apiUri + url, data = data)
         elif method == 'GET':
             attach = ''
             for key in data:
@@ -23,11 +23,9 @@ class ApiClient(object):
             json_result = result.json()
         else:
             print(result.status_code)
-            print(result.text)
             raise Exception(result.text)
         if json_result['success'] is False:
             print("Failed to send email.{0}".format(json_result['error']))
-            print(json_result['error'])
             raise Exception("Failed to send email.{0}".format(json_result['error']))
         print("Email sent.{0}".format(json_result['data']))
         return json_result['data']
@@ -45,8 +43,8 @@ class ApiClient(object):
         if 'bodyHtml' in email and email['bodyHtml']:
             email_data['bodyHtml'] = email['bodyHtml']
         if 'cc' in email and email['cc']:
-            email_data['msgCC']  = email['cc']
+            email_data['msgCC']  = ';'.join(email['cc'])
         if 'bcc' in email and email['bcc']:
-            email_data['msgBcc'] = email['bcc']
+            email_data['msgBcc'] = ';'.join(email['bcc'])
 
         return self.request('POST', '/email/send', email_data)

@@ -51,7 +51,7 @@ class ElasticEmailBackend(BaseEmailBackend):
         mail['senderEmail'] = sender_email
         mail['senderName'] = sender_name
         mail['subject'] = email.subject
-        mail['to'] = email.to
+        mail['to'] = ';'.join(email.to)
         if email.cc:
             mail['cc'] = email.cc
         if email.bcc:
@@ -60,12 +60,12 @@ class ElasticEmailBackend(BaseEmailBackend):
             if len(email.alternatives) > 0:
                 for alt in email.alternatives:
                     if alt[1] == "text/html":
-                        if 'bodyHtml' in bodyHtml:
+                        if 'bodyHtml' in mail:
                             mail['bodyHtml']+=alt[0]
                         else:
                             mail['bodyHtml'] = alt[0]
                     else:
-                        if 'bodyText' in bodyHtml:
+                        if 'bodyText' in mail:
                             mail['bodyText']+=alt[0]
                         else:
                             mail['bodyText'] = alt[0]
@@ -75,5 +75,5 @@ class ElasticEmailBackend(BaseEmailBackend):
             mail['bodyHtml'] = email.body
         else:
             mail['bodyText'] = email.body
-        print(mail)
+        print mail
         return mail
